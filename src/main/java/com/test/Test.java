@@ -30,14 +30,8 @@ public class Test extends HttpServlet {
 				try {
 					log.info("Shutdown Hook - Begin");
 
-					log.info("Shutdown Hook - Datastore - start");
-					Entity test = new Entity("Test");
-					test.setProperty("time", new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date()));
-					DatastoreServiceFactory.getDatastoreService().put(test);
-					log.info("Shutdown Hook - Datastore - end");
-
 					log.info("Shutdown Hook - TaskQueue - start");
-					Queue queue = QueueFactory.getQueue("test");
+					Queue queue = QueueFactory.getDefaultQueue();
 					queue.add(TaskOptions.Builder.withUrl("/test"));
 					log.info("Shutdown Hook - TaskQueue - end");
 
@@ -58,6 +52,10 @@ public class Test extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		log.info("doPost");
+		log.info("doPost - Will save Datastore");
+		Entity test = new Entity("Test");
+		test.setProperty("time", new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date()));
+		DatastoreServiceFactory.getDatastoreService().put(test);
+		log.info("doPost - Did save Datastore");
 	}
 }
